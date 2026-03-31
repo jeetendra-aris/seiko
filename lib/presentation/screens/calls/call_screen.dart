@@ -148,7 +148,19 @@ class _CallScreenState extends State<CallScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: RTCVideoView(local, mirror: isFrontCamera),
+                child: cameraOff
+                    ? const Center(
+                        child: Icon(
+                          Icons.account_circle,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      )
+                    : RTCVideoView(
+                        local,
+                        mirror: isFrontCamera,
+                        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                      ),
               ),
             ),
           ),
@@ -164,10 +176,10 @@ class _CallScreenState extends State<CallScreen> {
             top: 80,
             right: 20,
             child: CircleAvatar(
-              backgroundColor: Colors.black54,
+              backgroundColor: Colors.white24,
               child: IconButton(
                 onPressed: switchCamera,
-                icon: const Icon(Icons.cameraswitch, color: Colors.white),
+                icon: const Icon(Icons.flip_camera_ios, color: Colors.white),
               ),
             ),
           ),

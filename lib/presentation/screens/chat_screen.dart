@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spiko/presentation/providers/auth_provider.dart';
@@ -17,32 +18,64 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController messageController = TextEditingController();
 
-  Future<void> startCall({required bool isVideo}) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+  Future<void> startCall(BuildContext context, {required String receiverId, bool isVideo = false}) async {
+    final firestore = FirebaseFirestore.instance;
+    final currentUserId = fb.FirebaseAuth.instance.currentUser!.uid; // from authProvider
 
-    final callDoc = FirebaseFirestore.instance.collection('calls').doc();
+    /// ✅ STEP 1: Prevent multiple calls
+    final existing = await firestore.collection('calls').where('callerId', isEqualTo: currentUserId).where('status', isEqualTo: 'calling').get();
+
+    if (existing.docs.isNotEmpty) {
+      debugPrint("⚠️ Already in a call");
+      return;
+    }
+
+    /// ✅ STEP 2: Create new call
+    final callDoc = firestore.collection('calls').doc();
     final callId = callDoc.id;
 
     await callDoc.set({
       'callId': callId,
-      'callerId': authProvider.user!.uid,
-      'receiverId': widget.receiverId,
+      'callerId': currentUserId,
+      'receiverId': receiverId,
       'type': isVideo ? 'video' : 'audio',
       'status': 'calling',
       'createdAt': FieldValue.serverTimestamp(),
     });
 
-    // Navigate to call screen
+    /// ✅ STEP 3: Start timeout
+    startCallTimeout(callId);
+
+    /// ✅ STEP 4: Navigate
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CallScreen(
           callId: callId,
+          receiverId: receiverId,
           isCaller: true,
-          receiverId: widget.receiverId,
         ),
       ),
     );
+  }
+
+  void startCallTimeout(String callId) {
+    Future.delayed(const Duration(seconds: 30), () async {
+      final docRef = FirebaseFirestore.instance.collection('calls').doc(callId);
+
+      final doc = await docRef.get();
+
+      if (!doc.exists) return;
+
+      if (doc['status'] == 'calling') {
+        await docRef.update({
+          'status': 'ended',
+          'endedReason': 'missed',
+        });
+
+        debugPrint("⏰ Call auto-ended (not picked)");
+      }
+    });
   }
 
   @override
@@ -69,11 +102,11 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: () => startCall(isVideo: true),
+            onPressed: () => startCall(context, isVideo: true, receiverId: widget.receiverId),
             icon: const Icon(Icons.videocam),
           ),
           IconButton(
-            onPressed: () => startCall(isVideo: false),
+            onPressed: () => startCall(context, isVideo: false, receiverId: widget.receiverId),
             icon: const Icon(Icons.call),
           ),
         ],

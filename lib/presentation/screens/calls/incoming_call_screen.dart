@@ -80,11 +80,13 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Spacer(),
           const Icon(Icons.person, size: 100, color: Colors.white),
           const SizedBox(height: 20),
           const Text("Incoming Call", style: TextStyle(color: Colors.white, fontSize: 22)),
           Text(widget.callerId, style: const TextStyle(color: Colors.white70)),
           const SizedBox(height: 40),
+          Spacer(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -108,7 +110,8 @@ class _IncomingCallScreenState extends State<IncomingCallScreen> {
                 child: const Icon(Icons.call),
               ),
             ],
-          )
+          ),
+          const SizedBox(height: 40),
         ],
       ),
     );

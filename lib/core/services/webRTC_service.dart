@@ -44,6 +44,7 @@ class WebRTCService {
 
     /// Remote stream
     peerConnection!.onTrack = (event) {
+      print("🔥 Remote track received");
       if (event.streams.isNotEmpty) {
         remoteRenderer.srcObject = event.streams.first;
       }
@@ -77,6 +78,7 @@ class WebRTCService {
         );
 
         await peerConnection!.setRemoteDescription(answer);
+        print("Offer: ${data['offer']}");
       }
     });
 
@@ -137,6 +139,7 @@ class WebRTCService {
     _iceSub = callDoc.collection('callerCandidates').snapshots().listen((snapshot) {
       for (var doc in snapshot.docs) {
         final data = doc.data();
+        print("Answer: ${data['answer']}");
         peerConnection!.addCandidate(
           RTCIceCandidate(
             data['candidate'],

@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      CallListener.listen(context, userId);
+      CallListener.start(context, userId);
     });
     super.initState();
   }
