@@ -4,3 +4,8 @@ class CallStatus {
   static const ended = "ended";
   static const rejected = "rejected";
 }
+
+enum CallType {
+  audio,
+  video,
+}

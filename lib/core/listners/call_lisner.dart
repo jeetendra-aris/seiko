@@ -6,7 +6,7 @@ class CallListener {
   static bool isCallScreenOpen = false;
 
   static void start(BuildContext context, String currentUserId) {
-    FirebaseFirestore.instance.collection('calls').where('receiverId', isEqualTo: currentUserId).where('status', isEqualTo: 'calling').snapshots().listen((snapshot) {
+    FirebaseFirestore.instance.collection('calls').where('receiverId', isEqualTo: currentUserId).where('status', isEqualTo: 'ringing').snapshots().listen((snapshot) {
       if (snapshot.docs.isEmpty) return;
 
       final callDoc = snapshot.docs.first;
