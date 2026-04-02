@@ -3,4 +3,5 @@ enum CallUIState {
   ringing,
   connected,
   ended,
+  rejected,
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:spiko/core/utils/call_status.dart';
 
 // class WebRTCService {
 //   final RTCVideoRenderer localRenderer;
@@ -287,7 +288,7 @@ class WebRTCService {
     final callDoc = _firestore.collection('calls').doc(callId);
 
     /// Send ICE
-    peerConnection!.onIceCandidate = (candidate) {
+    peerConnection!.onIceCandidate = (RTCIceCandidate? candidate) {
       if (candidate != null) {
         callDoc.collection('callerCandidates').add(candidate.toMap());
       }
@@ -303,6 +304,7 @@ class WebRTCService {
 
     await callDoc.set({
       'offer': offer.toMap(),
+      'status': CallStatus.ringing,
     }, SetOptions(merge: true));
 
     /// Listen for Answer
@@ -339,7 +341,7 @@ class WebRTCService {
     final data = doc.data() as Map<String, dynamic>;
 
     /// Send ICE
-    peerConnection!.onIceCandidate = (candidate) {
+    peerConnection!.onIceCandidate = (RTCIceCandidate? candidate) {
       if (candidate != null) {
         callDoc.collection('receiverCandidates').add(candidate.toMap());
       }
@@ -365,9 +367,7 @@ class WebRTCService {
     final answer = await peerConnection!.createAnswer();
     await peerConnection!.setLocalDescription(answer);
 
-    await callDoc.set({
-      'answer': answer.toMap(),
-    }, SetOptions(merge: true));
+    await callDoc.set({'answer': answer.toMap(), 'status': CallStatus.connected}, SetOptions(merge: true));
 
     /// Listen for caller candidates
     _listenForCandidates(callDoc, 'callerCandidates');
@@ -390,8 +390,5 @@ class WebRTCService {
     await localStream?.dispose();
 
     await peerConnection?.close();
-
-    localRenderer.srcObject = null;
-    remoteRenderer.srcObject = null;
   }
 }
