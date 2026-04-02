@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:spiko/data/models/user_model.dart';
-import 'package:spiko/presentation/screens/chat_screen.dart';
+import 'package:spiko/presentation/screens/calls/chat_screen.dart';
 
 class SelectUserScreen extends StatelessWidget {
   const SelectUserScreen({super.key});

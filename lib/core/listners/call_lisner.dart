@@ -20,7 +20,7 @@ class CallListener {
         MaterialPageRoute(
           builder: (_) => IncomingCallScreen(
             callId: callDoc.id,
-            callerId: callDoc['callerId'],
+            callerName: callDoc['callerId'],
           ),
         ),
       ).then((_) {

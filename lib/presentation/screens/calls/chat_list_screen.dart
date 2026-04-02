@@ -4,7 +4,7 @@ import 'package:spiko/presentation/screens/select_user_screen.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/chat_provider.dart';
-import '../chat_screen.dart';
+import 'chat_screen.dart';
 
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
@@ -34,9 +34,6 @@ class ChatListScreen extends StatelessWidget {
       body: StreamBuilder(
         stream: chatProvider.getChats(currentUserId),
         builder: (context, snapshot) {
-          print("Snapshot hasData: ${snapshot.hasData}");
-          print("Docs length: ${snapshot.data?.length}");
-          print("Connection: ${snapshot.connectionState}");
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }

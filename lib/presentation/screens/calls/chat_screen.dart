@@ -52,7 +52,6 @@ class _ChatScreenState extends State<ChatScreen> {
       MaterialPageRoute(
         builder: (_) => CallScreen(
           callId: callId,
-          receiverId: receiverId,
           isCaller: true,
         ),
       ),

@@ -9,13 +9,11 @@ import 'package:spiko/core/utils/call_status.dart';
 
 class CallScreen extends StatefulWidget {
   final String callId;
-  final String receiverId;
   final bool isCaller;
 
   const CallScreen({
     super.key,
     required this.callId,
-    required this.receiverId,
     required this.isCaller,
   });
 
